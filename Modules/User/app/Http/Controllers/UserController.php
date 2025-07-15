@@ -2,8 +2,15 @@
 
 namespace Modules\User\Http\Controllers;
 
+use App\Classes\ApiResponse;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Modules\User\Classes\ResponseMessages;
+use Modules\User\Http\Requests\RegisterUserRequest;
+use Modules\User\Models\User;
+use Modules\User\Enums\RoleEnum;
 
 class UserController extends Controller
 {
@@ -16,32 +23,11 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('user::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
      * Show the specified resource.
      */
     public function show($id)
     {
         return view('user::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('user::edit');
     }
 
     /**
@@ -53,4 +39,26 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id) {}
+
+    public function register(RegisterUserRequest $request,ApiResponse $response)
+    {
+        try {
+
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone_number' => $request->phone_number,
+                'role' => RoleEnum::COACH
+            ]);
+
+            return $response->successResponse(ResponseMessages::REGISTER_SUCCESS,$user, 201);
+
+
+        } catch (\Throwable $e) {
+
+            Log::critical('Error on the user register: ' . $e->getMessage().' in : '.$e->getFile().' on line : '.$e->getLine());
+
+            return $response->errorResponse(ResponseMessages::ERROR_REGISTER, 500);
+        }
+    }
 }
