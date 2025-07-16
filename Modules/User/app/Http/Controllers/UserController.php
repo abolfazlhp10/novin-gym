@@ -5,15 +5,25 @@ namespace Modules\User\Http\Controllers;
 use App\Classes\ApiResponse;
 use App\Http\Controllers\Controller;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Modules\User\Classes\ResponseMessages;
 use Modules\User\Http\Requests\RegisterUserRequest;
 use Modules\User\Models\User;
 use Modules\User\Enums\RoleEnum;
+use Modules\User\Services\UserService;
 
 class UserController extends Controller
 {
+
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -40,25 +50,14 @@ class UserController extends Controller
      */
     public function destroy($id) {}
 
-    public function register(RegisterUserRequest $request,ApiResponse $response)
+    public function register(RegisterUserRequest $request, ApiResponse $response): JsonResponse
     {
-        try {
+        $user = $this->userService->register($request);
 
-            $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'phone_number' => $request->phone_number,
-                'role' => RoleEnum::COACH
-            ]);
-
-            return $response->successResponse(ResponseMessages::REGISTER_SUCCESS,$user, 201);
-
-
-        } catch (\Throwable $e) {
-
-            Log::critical('Error on the user register: ' . $e->getMessage().' in : '.$e->getFile().' on line : '.$e->getLine());
-
+        if (! $user) {
             return $response->errorResponse(ResponseMessages::ERROR_REGISTER, 500);
-        }
+        } 
+
+        return $response->successResponse(ResponseMessages::REGISTER_SUCCESS, $user, 201);
     }
 }
