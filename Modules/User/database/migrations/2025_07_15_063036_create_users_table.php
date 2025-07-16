@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone_number',11);
-            $table->enum('role',array_map(fn($role) =>$role->value , RoleEnum::cases()));
             $table->timestamps();
         });
     }

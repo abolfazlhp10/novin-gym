@@ -17,8 +17,9 @@ class UserService
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'phone_number' => $request->phone_number,
-                'role' => RoleEnum::COACH
             ]);
+
+            $user->assignRole(RoleEnum::COACH->value,'api');
 
             return $user;
  
