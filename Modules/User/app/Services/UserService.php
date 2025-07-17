@@ -19,7 +19,7 @@ class UserService
                 'phone_number' => $request->phone_number,
             ]);
 
-            $user->assignRole(RoleEnum::COACH->value,'api');
+            $user->assignRole(RoleEnum::COACH->value);
 
             return $user;
  

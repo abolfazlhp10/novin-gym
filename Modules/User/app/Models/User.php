@@ -39,4 +39,6 @@ class User extends Authenticatable
      */
     protected  $casts = [
     ];
+
+    protected $guard_name = 'api';
 }
