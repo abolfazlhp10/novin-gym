@@ -191,5 +191,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'first_name'   => 'نام',
+        'last_name'    => 'نام خانوادگی',
+        'gym_name'     => 'نام باشگاه',
+        'phone_number' => 'شماره موبایل'
+    ],
 ];
