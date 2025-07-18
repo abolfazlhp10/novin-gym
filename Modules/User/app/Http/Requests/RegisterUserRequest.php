@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\User\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,6 +14,7 @@ class RegisterUserRequest extends FormRequest
             'first_name'   => ['required', 'string', 'min:5', 'max:255'],
             'last_name'    => ['required', 'string', 'min:5', 'max:255'],
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:users'],
+            'gym_name'     => ['required', 'string', 'min:3', 'max:255'],
         ];
     }
 
