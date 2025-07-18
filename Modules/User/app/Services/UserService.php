@@ -2,7 +2,6 @@
 namespace Modules\User\Services;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Modules\User\Enums\RoleEnum;
 use Modules\User\Http\Requests\RegisterUserRequest;
 use Modules\User\Models\Gym;
@@ -23,12 +22,12 @@ class UserService
             $this->createGym($request, $user->id);
 
             DB::commit();
-            
+
             return $user->load(['gym']);
 
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::critical('Error on the user register: ' . $e->getMessage() . ' in : ' . $e->getFile() . ' on line : ' . $e->getLine());
+            logError('critical', 'Error on the user register : ', $e);
             return false;
         }
     }
