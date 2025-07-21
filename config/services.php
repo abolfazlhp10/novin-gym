@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'sms'=>[
+        
+        'driver' => env('SMS_DRIVER'),
+
+        'farazsms' =>[
+            'username'=>env('FARAZSMS_USERNAME'),
+            'password'=>env('FARAZSMS_PASSWORD')
+        ]
+    ]
+
 ];
