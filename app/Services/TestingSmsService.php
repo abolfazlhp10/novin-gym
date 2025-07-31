@@ -6,7 +6,7 @@ use App\Contracts\SmsServiceInterface;
 
 class TestingSmsService implements SmsServiceInterface
 {
-    public function send(string $to, string $message): bool
+    public function sendOtp(string $to, int $otp_code): bool
     {
         return true;
     }

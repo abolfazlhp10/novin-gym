@@ -1,18 +1,17 @@
 <?php
-
 namespace Modules\User\Http\Controllers;
 
 use App\Classes\ApiResponse;
+use App\Exceptions\SmsSendingFailedException;
 use App\Http\Controllers\Controller;
-use Exception;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Modules\User\Classes\ResponseMessages;
+use Modules\User\Http\Requests\LoginUserRequest;
 use Modules\User\Http\Requests\RegisterUserRequest;
-use Modules\User\Models\User;
-use Modules\User\Enums\RoleEnum;
 use Modules\User\Services\UserService;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -43,12 +42,14 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) {}
+    public function update(Request $request, $id)
+    {}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
+    public function destroy($id)
+    {}
 
     public function register(RegisterUserRequest $request, ApiResponse $response): JsonResponse
     {
@@ -56,8 +57,43 @@ class UserController extends Controller
 
         if (! $user) {
             return $response->errorResponse(ResponseMessages::ERROR_REGISTER, 500);
-        } 
+        }
 
         return $response->successResponse(ResponseMessages::REGISTER_SUCCESS, $user, 201);
+    }
+
+    public function sendOtp(LoginUserRequest $request, ApiResponse $response)
+    {
+
+        try {
+            $result = $this->userService->sendOtp($request);
+
+            if ($result) {
+                return $response->successResponse(ResponseMessages::OTP_SEND_SUCCESS, [], 200);
+            }
+            
+        } catch (SmsSendingFailedException $e) {
+            logError('critical', 'SMS Gateway Error', $e);
+            return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
+        } catch (RequestException $e) {
+            logError('critical', 'SMS Service Network Error', $e);
+            return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
+        } catch (Throwable $th) {
+            logError('critical', 'SMS sending failed', $th);
+            return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
+
+        }
+    }
+
+    public function login(LoginUserRequest $request, ApiResponse $response)
+    {
+        $user = $this->userService->login($request);
+
+        if (! $user) {
+            return $response->errorResponse(ResponseMessages::OTP_IS_FALSE, 422);
+        }
+
+        return $response->successResponse(ResponseMessages::LOGIN_SUCCESS,$user,200);
+
     }
 }

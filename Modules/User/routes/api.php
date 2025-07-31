@@ -8,3 +8,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 Route::post('register',[UserController::class,'register']);
+
+Route::post('send-otp',[UserController::class,'sendOtp']);
+
+Route::post('login' , [UserController::class , 'login']);

@@ -18,16 +18,21 @@ class AppServiceProvider extends ServiceProvider
 
     private function bindSmsService()
     {
-        $this->app->singleton(SmsServiceInterface::class, function ($app) {
+        $this->app->bind(SmsServiceInterface::class, function () {
 
-            $driver = config('services.sms.driver','testing');
+            if (config('services.sms.driver') == 'testing') {
+                return new TestingSmsService();
+            }
 
-            $services = [
-                'farazsms' => FarazsmsService::class,
-                'testing'  => TestingSmsService::class,
-            ];
+            $config = config('services.sms.farazsms');
 
-            return $app->make($services[$driver]);
+            return new FarazsmsService(
+                base_url: $config['base_url'],
+                username: $config['username'],
+                password: $config['password'],
+                from: $config['from'],
+                pattern_code: $config['pattern_code']
+            );
         });
     }
 
