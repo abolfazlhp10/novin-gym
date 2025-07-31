@@ -1,0 +1,455 @@
+openapi: 3.0.3
+info:
+  title: Novin Gym API
+  description: |
+    API for Novin Gym application 
+  
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.novingym.com/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and registration endpoints
+  - name: Users
+    description: User management operations
+
+paths:
+  /register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: |
+        Register a new coach user with gym information. 
+        The user will be automatically assigned the 'coach' role.
+        A gym record will be created and associated with the user.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+            examples:
+              validRegistration:
+                summary: Valid registration data
+                value:
+                  first_name: "علی"
+                  last_name: "احمدی"
+                  phone_number: "09123456789"
+                  gym_name: "باشگاه ورزشی نوین"
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                registrationSuccess:
+                  summary: Successful registration response
+                  value:
+                    message: "ثبت نام با موفقیت انجام شد"
+                    data:
+                      id: 1
+                      first_name: "علی"
+                      last_name: "احمدی"
+                      phone_number: "09123456789"
+                      created_at: "2025-07-17T11:30:00.000000Z"
+                      updated_at: "2025-07-17T11:30:00.000000Z"
+                      gym:
+                        id: 1
+                        name: "باشگاه ورزشی نوین"
+                        user_id: 1
+                        created_at: "2025-07-17T11:30:00.000000Z"
+                        updated_at: "2025-07-17T11:30:00.000000Z"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation error response
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      first_name:
+                        - "The first name field is required."
+                      phone_number:
+                        - "The phone number has already been taken."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                serverError:
+                  summary: Server error response
+                  value:
+                    message: "ارور در ثبت نام کاربر !"
+
+  /send-otp:
+    post:
+      tags:
+        - Authentication
+      summary: Send OTP to phone number
+      description: |
+        Send a one-time password (OTP) to the specified phone number.
+        The OTP is valid for 2 minutes and can be used for login.
+        
+        **Note:** In testing environment, the OTP code is always '12345' (configurable).
+      operationId: sendOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+            examples:
+              validPhoneNumber:
+                summary: Valid phone number
+                value:
+                  phone_number: "09123456789"
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                otpSentSuccess:
+                  summary: OTP sent successfully
+                  value:
+                    message: "رمز یکبار مصرف با موفقیت ارسال شد"
+                    data: []
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                phoneNotFound:
+                  summary: Phone number not found
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      phone_number:
+                        - "The selected phone number is invalid."
+        '500':
+          description: SMS service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                smsError:
+                  summary: SMS service error
+                  value:
+                    message: "ارور در ارسال رمز یکبار مصرف"
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user with OTP
+      description: |
+        Authenticate user using phone number and OTP code.
+        Upon successful authentication, a Sanctum token is generated and returned.
+        The token is also set as an HTTP-only cookie for enhanced security.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              validLogin:
+                summary: Valid login credentials
+                value:
+                  phone_number: "09123456789"
+                  otp_code: 12345
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+              examples:
+                loginSuccess:
+                  summary: Successful login response
+                  value:
+                    message: "ورود با موفقیت انجام شد"
+                    data:
+                      id: 1
+                      first_name: "علی"
+                      last_name: "احمدی"
+                      phone_number: "09123456789"
+                      created_at: "2025-07-17T11:30:00.000000Z"
+                      updated_at: "2025-07-17T11:30:00.000000Z"
+                      token: "1|abcdef1234567890abcdef1234567890abcdef1234567890"
+          headers:
+            Set-Cookie:
+              description: Authentication token cookie
+              schema:
+                type: string
+              example: "auth_token=1|abcdef1234567890abcdef1234567890abcdef1234567890; HttpOnly; Secure; SameSite=Strict"
+        '422':
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidOtp:
+                  summary: Invalid OTP response
+                  value:
+                    message: "کد یکبار مصرف نامعتبر است"
+
+components:
+  schemas:
+    RegisterUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - phone_number
+        - gym_name
+      properties:
+        first_name:
+          type: string
+          minLength: 5
+          maxLength: 255
+          description: User's first name (minimum 5 characters)
+          example: "علی"
+        last_name:
+          type: string
+          minLength: 5
+          maxLength: 255
+          description: User's last name (minimum 5 characters)
+          example: "احمدی"
+        phone_number:
+          type: string
+          pattern: "^09\\d{9}$"
+          maxLength: 11
+          description: Iranian mobile phone number (must start with 09 and be 11 digits)
+          example: "09123456789"
+        gym_name:
+          type: string
+          minLength: 3
+          maxLength: 255
+          description: Name of the gym (minimum 3 characters)
+          example: "باشگاه ورزشی نوین"
+
+    SendOtpRequest:
+      type: object
+      required:
+        - phone_number
+      properties:
+        phone_number:
+          type: string
+          pattern: "^09\\d{9}$"
+          maxLength: 11
+          description: Iranian mobile phone number (must start with 09 and be 11 digits)
+          example: "09123456789"
+
+    LoginRequest:
+      type: object
+      required:
+        - phone_number
+        - otp_code
+      properties:
+        phone_number:
+          type: string
+          pattern: "^09\\d{9}$"
+          maxLength: 11
+          description: Iranian mobile phone number (must start with 09 and be 11 digits)
+          example: "09123456789"
+        otp_code:
+          type: integer
+          minimum: 10000
+          maximum: 99999
+          description: 5-digit OTP code received via SMS
+          example: 12345
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique user identifier
+          example: 1
+        first_name:
+          type: string
+          description: User's first name
+          example: "علی"
+        last_name:
+          type: string
+          description: User's last name
+          example: "احمدی"
+        phone_number:
+          type: string
+          description: User's phone number
+          example: "09123456789"
+        created_at:
+          type: string
+          format: date-time
+          description: User creation timestamp
+          example: "2025-07-17T11:30:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: User last update timestamp
+          example: "2025-07-17T11:30:00.000000Z"
+        gym:
+          $ref: '#/components/schemas/Gym'
+
+    Gym:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique gym identifier
+          example: 1
+        name:
+          type: string
+          description: Gym name
+          example: "باشگاه ورزشی نوین"
+        user_id:
+          type: integer
+          description: Associated user ID
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: Gym creation timestamp
+          example: "2025-07-17T11:30:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Gym last update timestamp
+          example: "2025-07-17T11:30:00.000000Z"
+
+    LoginSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+                  properties:
+                    token:
+                      type: string
+                      description: Sanctum authentication token
+                      example: "1|abcdef1234567890abcdef1234567890abcdef1234567890"
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: "عملیات با موفقیت انجام شد"
+        data:
+          description: Response data (can be object, array, or null)
+          example: {}
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "خطا در انجام عملیات"
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Validation error message
+          example: "The given data was invalid."
+        errors:
+          type: object
+          description: Field-specific validation errors
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            phone_number:
+              - "The phone number has already been taken."
+            first_name:
+              - "The first name field is required."
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Sanctum authentication token. 
+        Include the token in the Authorization header as 'Bearer {token}'.
+        The token is returned after successful login.
+
+security:
+  - BearerAuth: []
+
+    parameters:
+    PhoneNumberParam:
+      name: phone_number
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^09\\d{9}$"
+      description: Iranian mobile phone number
+      example: "09123456789"
+
+    examples:
+    RegisterUserExample:
+      summary: Complete user registration example
+      value:
+        first_name: "علی"
+        last_name: "احمدی"
+        phone_number: "09123456789"
+        gym_name: "باشگاه ورزشی نوین"
+
+    LoginExample:
+      summary: Complete login example
+      value:
+        phone_number: "09123456789"
+        otp_code: 12345
+
+    callbacks:
+    OtpExpiration:
+      '{$request.body#/phone_number}':
+        post:
+          summary: OTP expiration callback
+          description: Called when OTP expires (after 2 minutes)
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    phone_number:
+                      type: string
+                    expired_at:
+                      type: string
+                      format: date-time
+          responses:
+            '200':
+              description: OTP expiration acknowledged 
