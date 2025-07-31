@@ -1,6 +1,7 @@
 <?php
 
-namespace Modules\User\Models;
+namespace Modules\User\Models\V1;
+
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Modules\User\Models\Gym;
+use Modules\User\Models\V1\Gym;
 
 class User extends Authenticatable
 {

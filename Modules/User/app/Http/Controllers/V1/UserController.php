@@ -1,5 +1,5 @@
 <?php
-namespace Modules\User\Http\Controllers;
+namespace Modules\User\Http\Controllers\V1;
 
 use App\Classes\ApiResponse;
 use App\Exceptions\SmsSendingFailedException;
@@ -7,10 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\User\Classes\ResponseMessages;
-use Modules\User\Http\Requests\LoginUserRequest;
-use Modules\User\Http\Requests\RegisterUserRequest;
-use Modules\User\Services\UserService;
+use Modules\User\Classes\V1\ResponseMessages;
+use Modules\User\Http\Requests\V1\LoginUserRequest;
+use Modules\User\Http\Requests\V1\RegisterUserRequest;
+use Modules\User\Services\V1\UserService;
 use Throwable;
 
 class UserController extends Controller

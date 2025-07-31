@@ -1,17 +1,17 @@
 <?php
-namespace Modules\User\Services;
+namespace Modules\User\Services\V1;
 
 use App\Contracts\SmsServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
-use Modules\User\Enums\RoleEnum;
-use Modules\User\Http\Requests\LoginUserRequest;
-use Modules\User\Http\Requests\RegisterUserRequest;
-use Modules\User\Models\Gym;
-use Modules\User\Models\Otp;
-use Modules\User\Models\User;
+use Modules\User\Enums\V1\RoleEnum;
+use Modules\User\Http\Requests\V1\LoginUserRequest;
+use Modules\User\Http\Requests\V1\RegisterUserRequest;
+use Modules\User\Models\V1\Gym;
+use Modules\User\Models\V1\Otp;
+use Modules\User\Models\V1\User;
 
 class UserService
 {

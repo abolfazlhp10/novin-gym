@@ -5,10 +5,8 @@ info:
     API for Novin Gym application 
   
 servers:
-  - url: http://localhost:8000/api
+  - url: http://localhost:8000/api/V1
     description: Development server
-  - url: https://api.novingym.com/api
-    description: Production server
 
 tags:
   - name: Authentication

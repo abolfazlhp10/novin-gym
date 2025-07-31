@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\User\Classes;
+namespace Modules\User\Classes\V1;
 
 class ResponseMessages{
     const REGISTER_SUCCESS = 'ثبت نام با موفقیت انجام شد ';

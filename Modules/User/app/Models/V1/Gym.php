@@ -1,9 +1,9 @@
 <?php
-namespace Modules\User\Models;
+namespace Modules\User\Models\V1;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Modules\User\Models\User;
+use Modules\User\Models\V1\User;
 
 class Gym extends Model
 {
