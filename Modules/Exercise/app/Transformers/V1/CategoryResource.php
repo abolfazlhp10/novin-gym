@@ -3,6 +3,7 @@ namespace Modules\Exercise\Transformers\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Morilog\Jalali\Jalalian;
 
 class CategoryResource extends JsonResource
 {
@@ -15,8 +16,8 @@ class CategoryResource extends JsonResource
             'id'         => $this->id,
             'name_fa'    => $this->name_fa,
             'name_en'    => $this->name_en,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
+            'updated_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
         ];
     }
 }
