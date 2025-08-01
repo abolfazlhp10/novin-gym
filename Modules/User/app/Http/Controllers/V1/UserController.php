@@ -11,6 +11,7 @@ use Modules\User\Classes\V1\ResponseMessages;
 use Modules\User\Http\Requests\V1\LoginUserRequest;
 use Modules\User\Http\Requests\V1\RegisterUserRequest;
 use Modules\User\Services\V1\UserService;
+use Modules\User\Transformers\V1\UserResource;
 use Throwable;
 
 class UserController extends Controller
@@ -59,7 +60,7 @@ class UserController extends Controller
             return $response->errorResponse(ResponseMessages::ERROR_REGISTER, 500);
         }
 
-        return $response->successResponse(ResponseMessages::REGISTER_SUCCESS, $user, 201);
+        return $response->successResponse(ResponseMessages::REGISTER_SUCCESS, new UserResource($user), 201);
     }
 
     public function sendOtp(LoginUserRequest $request, ApiResponse $response)
@@ -93,7 +94,7 @@ class UserController extends Controller
             return $response->errorResponse(ResponseMessages::OTP_IS_FALSE, 422);
         }
 
-        return $response->successResponse(ResponseMessages::LOGIN_SUCCESS,$user,200);
+        return $response->successResponse(ResponseMessages::LOGIN_SUCCESS,new UserResource($user),200);
 
     }
 }
