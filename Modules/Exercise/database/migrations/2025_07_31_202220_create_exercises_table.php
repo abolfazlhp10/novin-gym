@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('exercises', function (Blueprint $table) {
             $table->id();
-            $table->string('name_fa')->index();
-            $table->string('name_en')->index();
+            $table->string('name_fa')->unique();
+            $table->string('name_en')->unique();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnUpdate();
             $table->string('video');
+            $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnUpdate();
             $table->text('description')->nullable();
             $table->timestamps();
         });

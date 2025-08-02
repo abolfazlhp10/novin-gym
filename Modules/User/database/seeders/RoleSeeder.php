@@ -3,7 +3,7 @@
 namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\User\Enums\RoleEnum;
+use Modules\User\Enums\V1\RoleEnum;
 use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder

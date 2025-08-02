@@ -41,10 +41,10 @@ return [
 
         'farazsms' => [
             'base_url'=>env('FARAZSMS_BASEURL','https://ippanel.com/patterns/pattern'),
-            'username' => env('FARAZSMS_USERNAME','u09353096075'),
-            'password' => env('FARAZSMS_PASSWORD','Faraz@1879982190256453'),
-            'from' => env('FARAZSMS_FROM', '+3000505'),
-            'pattern_code' => env('FARAZSMS_PATTERN_CODE', 'y7ffiunnbgppqpc'),
+            'username' => env('FARAZSMS_USERNAME'),
+            'password' => env('FARAZSMS_PASSWORD'),
+            'from' => env('FARAZSMS_FROM'),
+            'pattern_code' => env('FARAZSMS_PATTERN_CODE'),
         ],
 
         'testing'=>[

@@ -4,16 +4,15 @@ namespace Modules\Exercise\Transformers\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 
 class CategoryCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request): Collection
     {
-        return [
-            'data'=>$this->collection
-        ];
+        return $this->collection;
     }
 }

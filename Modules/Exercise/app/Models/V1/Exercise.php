@@ -10,7 +10,7 @@ class Exercise extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name_fa','name_en','category_id','description','video'];
+    protected $fillable = ['name_fa','name_en','category_id','equipment_id','description','video'];
 
 
 }

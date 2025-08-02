@@ -3,6 +3,7 @@
 namespace Modules\Exercise\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -11,7 +12,10 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'name_fa' => ['required', 'string', 'max:255', Rule::unique('categories', 'name_fa')],
+            'name_en' => ['required', 'string', 'max:255', Rule::unique('categories', 'name_en')],
+        ];
     }
 
     /**
@@ -19,6 +23,6 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && $this->user()->hasRole('admin');
     }
 }

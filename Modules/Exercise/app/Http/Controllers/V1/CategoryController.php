@@ -40,7 +40,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category = new CategoryResource($category);
-        return $this->apiResponse->successResponse(ResponseMessages::GET_CATEGORY_SUCCESS, $category, 201);
+        return $this->apiResponse->successResponse(ResponseMessages::GET_CATEGORY_SUCCESS, $category, 200);
 
     }
 
@@ -59,6 +59,6 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $this->categoryService->delete($category);
-        return $this->apiResponse->successResponse(ResponseMessages::DELETE_CATEGORY_SUCCESS, [], 204);
+        return $this->apiResponse->successResponse(ResponseMessages::DELETE_CATEGORY_SUCCESS, [], 200);
     }
 }

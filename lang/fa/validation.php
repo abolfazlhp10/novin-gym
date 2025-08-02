@@ -195,6 +195,9 @@ return [
         'first_name'   => 'نام',
         'last_name'    => 'نام خانوادگی',
         'gym_name'     => 'نام باشگاه',
-        'phone_number' => 'شماره موبایل'
+        'phone_number' => 'شماره موبایل',
+        'name_fa'      => 'نام فارسی',
+        'name_en'      => 'نام انگلیسی',
+        'video'        => 'ویدیو',
     ],
 ];

@@ -21,7 +21,7 @@ class CategoryService
         return $category;
     }
 
-    public function delete(Category $category)
+    public function delete(Category $category):void
     {
         $category->delete();
     }
