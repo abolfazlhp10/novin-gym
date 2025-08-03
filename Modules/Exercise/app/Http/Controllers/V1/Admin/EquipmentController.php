@@ -1,6 +1,7 @@
 <?php
 
-namespace Modules\Exercise\Http\Controllers\V1;
+namespace Modules\Exercise\Http\Controllers\V1\Admin;
+
 
 use App\Http\Controllers\Controller;
 use Modules\Exercise\Models\V1\Equipment;

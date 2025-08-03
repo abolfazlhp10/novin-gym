@@ -1,5 +1,6 @@
 <?php
-namespace Modules\Exercise\Http\Controllers\V1;
+
+namespace Modules\Exercise\Http\Controllers\V1\Admin;
 
 use App\Classes\ApiResponse;
 use App\Http\Controllers\Controller;
