@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\User\Services\V1;
 
 use App\Contracts\SmsServiceInterface;
@@ -7,107 +8,106 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Modules\User\Enums\V1\RoleEnum;
-use Modules\User\Http\Requests\V1\LoginUserRequest;
-use Modules\User\Http\Requests\V1\RegisterUserRequest;
+use Modules\User\Exceptions\InvalidOtpException;
 use Modules\User\Models\V1\Gym;
 use Modules\User\Models\V1\Otp;
 use Modules\User\Models\V1\User;
+use Modules\User\Exceptions\RegistrationFailedException;
 
 class UserService
 {
-    protected $smsService;
+    public function __construct(private SmsServiceInterface $smsService) {}
 
-    public function __construct(SmsServiceInterface $smsService)
-    {
-        $this->smsService = $smsService;
-    }
-
-    public function register(RegisterUserRequest $request): User | bool
+    public function register(array $validated_data): User
     {
         DB::beginTransaction();
 
         try {
 
-            $user = $this->createUser($request);
+            $user = $this->createUser($validated_data);
 
             $user->assignRole(RoleEnum::COACH->value);
 
-            $this->createGym($request, $user->id);
+            $this->createGym($validated_data, $user->id);
 
             DB::commit();
 
             return $user->load(['gym']);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             logError('critical', 'Error on the user register : ', $e);
-            return false;
+            throw new RegistrationFailedException('Registration failed');
         }
     }
 
-    public function sendOtp(LoginUserRequest $request)
+    public function sendOtp(array $validated_data): bool
     {
-        $otp_code = $this->createOtp($request);
+        $phone_number = $validated_data['phone_number'];
 
-        $response = $this->smsService->sendOtp($request->phone_number, $otp_code);
+        $otp_code = $this->createOtp($phone_number);
+
+        $response = $this->smsService->sendOtp($phone_number, $otp_code);
 
         return $response;
-
     }
 
-    public function login(LoginUserRequest $request): bool | User
+    public function login(array $validated_data): User
     {
-        if(! $this->isOtpValid($request))
-        {
-            return false;
+        $phone_number = $validated_data['phone_number'];
+        $otp_code = $validated_data['otp_code'];
+
+        if (! $this->isOtpValid($phone_number, $otp_code)) {
+            throw new InvalidOtpException('the otp code is incorrect or expired');
         }
 
-        $user = User::firstWhere('phone_number',$request->phone_number);
+        $user = User::firstWhere('phone_number', $phone_number);
 
         $this->authenticateUser($user);
 
         return $user;
-     
     }
 
-    protected function createUser(RegisterUserRequest $request): User
+    private function createUser(array $data): User
     {
         return User::create([
-            'first_name'   => $request->first_name,
-            'last_name'    => $request->last_name,
-            'phone_number' => $request->phone_number,
+            'first_name'   => $data['first_name'],
+            'last_name'    => $data['last_name'],
+            'phone_number' => $data['phone_number'],
         ]);
     }
 
-    protected function createGym(RegisterUserRequest $request, $user_id): void
+    private function createGym(array $data, $user_id): void
     {
         Gym::create([
-            'name'    => $request->gym_name,
+            'name'    => $data['gym_name'],
             'user_id' => $user_id,
         ]);
     }
 
-    private function createOtp($request)
+    private function createOtp(string $phone_number): int
     {
         $otp_code = random_int(10000, 99999);
 
         Otp::create([
-            'phone_number'    => $request->phone_number,
+            'phone_number'    => $phone_number,
             'otp_code'        => $otp_code,
             'expiration_time' => Carbon::now()->addMinutes(2),
         ]);
 
         return $otp_code;
-
     }
 
-    private function isOtpValid($request)
+    private function isOtpValid(string $phone_number, int $otp_code): bool
     {
-        if(config('services.sms.driver')=='testing' && config('services.sms.testing.otp_code') == $request->otp_code){
+
+        if (app()->isLocal() && $otp_code == '12345') {
             return true;
         }
 
-        $otp = Otp::where('phone_number', $request->phone_number)->where('otp_code', $request->otp_code)->where('expiration_time', '>', Carbon::now()->subMinutes(2))->first();
+        $otp = Otp::where('phone_number', $phone_number)
+            ->where('otp_code', $otp_code)
+            ->where('expiration_time', '>', now())
+            ->first();
 
         if (! $otp) {
             return false;
@@ -118,17 +118,15 @@ class UserService
         return true;
     }
 
-    private function authenticateUser($user)
+    private function authenticateUser($user): void
     {
         Auth::login($user);
 
         $token = $user->createToken('novingym')->plainTextToken;
 
         Cookie::queue('auth_token', $token, 60 * 24, null, null, true, true);
-        
+
         // this is add only for testing
         $user->token = $token;
-        
     }
-
 }

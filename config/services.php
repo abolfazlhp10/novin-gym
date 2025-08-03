@@ -47,9 +47,6 @@ return [
             'pattern_code' => env('FARAZSMS_PATTERN_CODE'),
         ],
 
-        'testing'=>[
-            'otp_code' => env('TESTING_SMS_OTP','12345')
-        ]
     ]
 
 ];
