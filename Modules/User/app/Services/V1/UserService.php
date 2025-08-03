@@ -89,7 +89,7 @@ class UserService
 
     private function createOtp($request)
     {
-        $otp_code = mt_rand(10000, 99999);
+        $otp_code = random_int(10000, 99999);
 
         Otp::create([
             'phone_number'    => $request->phone_number,
