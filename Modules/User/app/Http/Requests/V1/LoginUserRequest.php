@@ -10,17 +10,12 @@ class LoginUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'exists:users'],
+            'otp_code'     => ['required', 'integer', 'digits:5'],
         ];
 
-        if ($this->has('otp_code')) {
-            $rules['otp_code'] = ['required', 'integer', 'digits:5']; 
-        }
-
-        return $rules;
     }
-
 
     /**
      * Determine if the user is authorized to make this request.
