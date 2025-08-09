@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('gyms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignId('user_id')->constrained('users');
+            $table->string('logo')->nullable();
+            $table->text('address')->nullable();
             $table->timestamps();
         });
     }

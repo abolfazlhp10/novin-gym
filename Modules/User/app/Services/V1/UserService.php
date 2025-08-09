@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\User\Services\V1;
 
 use App\Contracts\SmsServiceInterface;
@@ -9,14 +8,17 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Modules\User\Enums\V1\RoleEnum;
 use Modules\User\Exceptions\InvalidOtpException;
+use Modules\User\Exceptions\RegistrationFailedException;
 use Modules\User\Models\V1\Gym;
 use Modules\User\Models\V1\Otp;
 use Modules\User\Models\V1\User;
-use Modules\User\Exceptions\RegistrationFailedException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
-    public function __construct(private SmsServiceInterface $smsService) {}
+    public function __construct(private SmsServiceInterface $smsService)
+    {}
 
     public function register(array $validated_data): User
     {
@@ -54,7 +56,7 @@ class UserService
     public function login(array $validated_data): User
     {
         $phone_number = $validated_data['phone_number'];
-        $otp_code = $validated_data['otp_code'];
+        $otp_code     = $validated_data['otp_code'];
 
         if (! $this->isOtpValid($phone_number, $otp_code)) {
             throw new InvalidOtpException('the otp code is incorrect or expired');
@@ -78,9 +80,17 @@ class UserService
 
     private function createGym(array $data, $user_id): void
     {
+        if (Arr::has($data, 'logo')) {
+            $path = Storage::disk('public')->put('gyms/logos', $data['logo']);
+
+            $data['logo'] = $path;
+        }
+
         Gym::create([
             'name'    => $data['gym_name'],
             'user_id' => $user_id,
+            'logo'    => $data['logo'] ?? null,
+            'address' => $data['address'] ?? null,
         ]);
     }
 

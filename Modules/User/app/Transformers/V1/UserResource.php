@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'created_at'   => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
             'updated_at'   => Jalalian::fromCarbon($this->updated_at)->format('Y/m/d H:i'),
             'token'        => $this->when($this->token, $this->token),
+            'gym'          => new GymResource($this->whenLoaded('gym')),
         ];
     }
 }
