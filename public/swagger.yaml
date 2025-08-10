@@ -24,16 +24,41 @@ paths:
         Register a new coach user with gym information. 
         The user will be automatically assigned the 'coach' role.
         A gym record will be created and associated with the user.
+        
+        **Features:**
+        - Creates user with first name, last name, and phone number
+        - Automatically assigns 'coach' role using Spatie Laravel Permission
+        - Creates associated gym record with name, optional logo, and address
+        - Uses database transaction for data integrity
+        - Returns user data with gym information and Jalali formatted timestamps
+        
+        **Technical Details:**
+        - Content-Type: multipart/form-data (supports file uploads)
+        - Database transaction ensures data consistency
+        - Phone number uniqueness validation against users table
+        - File storage in public/storage/gyms/logos directory
+        - Timestamps converted to Jalali calendar format
+        - Role assignment using Spatie Laravel Permission package
+        - Automatic gym creation and user association
       operationId: registerUser
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/RegisterUserRequest'
             examples:
               validRegistration:
                 summary: Valid registration data
+                value:
+                  first_name: "علی"
+                  last_name: "احمدی"
+                  phone_number: "09123456789"
+                  gym_name: "باشگاه ورزشی نوین"
+                  logo: "(binary file)"
+                  address: "تهران، خیابان ولیعصر، پلاک 123"
+              minimalRegistration:
+                summary: Minimal registration data (without optional fields)
                 value:
                   first_name: "علی"
                   last_name: "احمدی"
@@ -45,25 +70,44 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessResponse'
+                $ref: '#/components/schemas/RegisterSuccessResponse'
               examples:
                 registrationSuccess:
                   summary: Successful registration response
                   value:
-                    message: "ثبت نام با موفقیت انجام شد"
+                    message: "ثبت نام با موفقیت انجام شد "
                     data:
                       id: 1
                       first_name: "علی"
                       last_name: "احمدی"
                       phone_number: "09123456789"
-                      created_at: "2025-07-17T11:30:00.000000Z"
-                      updated_at: "2025-07-17T11:30:00.000000Z"
+                      created_at: "1404/04/26 15:30"
+                      updated_at: "1404/04/26 15:30"
                       gym:
                         id: 1
                         name: "باشگاه ورزشی نوین"
-                        user_id: 1
-                        created_at: "2025-07-17T11:30:00.000000Z"
-                        updated_at: "2025-07-17T11:30:00.000000Z"
+                        logo: null
+                        address: null
+                        created_at: "1404/04/26 15:30"
+                        updated_at: "1404/04/26 15:30"
+                registrationWithLogo:
+                  summary: Successful registration with logo and address
+                  value:
+                    message: "ثبت نام با موفقیت انجام شد "
+                    data:
+                      id: 1
+                      first_name: "علی"
+                      last_name: "احمدی"
+                      phone_number: "09123456789"
+                      created_at: "1404/04/26 15:30"
+                      updated_at: "1404/04/26 15:30"
+                      gym:
+                        id: 1
+                        name: "باشگاه ورزشی نوین"
+                        logo: "gyms/logos/logo_123.png"
+                        address: "تهران، خیابان ولیعصر، پلاک 123"
+                        created_at: "1404/04/26 15:30"
+                        updated_at: "1404/04/26 15:30"
         '422':
           description: Validation error
           content:
@@ -78,6 +122,56 @@ paths:
                     errors:
                       first_name:
                         - "The first name field is required."
+                      last_name:
+                        - "The last name field is required."
+                      phone_number:
+                        - "The phone number field is required."
+                        - "The phone number format is invalid."
+                        - "The phone number has already been taken."
+                      gym_name:
+                        - "The gym name field is required."
+                        - "The gym name must be at least 3 characters."
+                phoneNumberExists:
+                  summary: Phone number already exists
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      phone_number:
+                        - "The phone number has already been taken."
+                invalidPhoneFormat:
+                  summary: Invalid phone number format
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      phone_number:
+                        - "The phone number format is invalid."
+                fieldLengthError:
+                  summary: Field length validation error
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      first_name:
+                        - "The first name must be at least 3 characters."
+                      last_name:
+                        - "The last name must be at least 3 characters."
+                      gym_name:
+                        - "The gym name must be at least 3 characters."
+                      address:
+                        - "The address must be at least 3 characters."
+                invalidLogo:
+                  summary: Invalid logo file
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      logo:
+                        - "The logo must be an image."
+                        - "The logo must be a file of type: png, jpg, jpeg."
+                        - "The logo may not be greater than 5120 kilobytes."
+                databaseError:
+                  summary: Database constraint error
+                  value:
+                    message: "The given data was invalid."
+                    errors:
                       phone_number:
                         - "The phone number has already been taken."
         '500':
@@ -89,6 +183,10 @@ paths:
               examples:
                 serverError:
                   summary: Server error response
+                  value:
+                    message: "ارور در ثبت نام کاربر !"
+                databaseTransactionError:
+                  summary: Database transaction failed
                   value:
                     message: "ارور در ثبت نام کاربر !"
 
@@ -225,28 +323,39 @@ components:
       properties:
         first_name:
           type: string
-          minLength: 5
+          minLength: 3
           maxLength: 255
-          description: User's first name (minimum 5 characters)
+          description: User's first name (minimum 3 characters, required)
           example: "علی"
         last_name:
           type: string
-          minLength: 5
+          minLength: 3
           maxLength: 255
-          description: User's last name (minimum 5 characters)
+          description: User's last name (minimum 3 characters, required)
           example: "احمدی"
         phone_number:
           type: string
           pattern: "^09\\d{9}$"
           maxLength: 11
-          description: Iranian mobile phone number (must start with 09 and be 11 digits)
+          description: Iranian mobile phone number (must start with 09 and be 11 digits, must be unique in users table, required)
           example: "09123456789"
         gym_name:
           type: string
           minLength: 3
           maxLength: 255
-          description: Name of the gym (minimum 3 characters)
+          description: Name of the gym (minimum 3 characters, required)
           example: "باشگاه ورزشی نوین"
+        logo:
+          type: string
+          format: binary
+          description: Gym logo image file (optional, max 5MB, formats (png, jpg, jpeg))
+          nullable: true
+        address:
+          type: string
+          minLength: 3
+          description: Gym address (optional, minimum 3 characters if provided)
+          nullable: true
+          example: "تهران، خیابان ولیعصر، پلاک 123"
 
     SendOtpRequest:
       type: object
@@ -300,14 +409,12 @@ components:
           example: "09123456789"
         created_at:
           type: string
-          format: date-time
-          description: User creation timestamp
-          example: "2025-07-17T11:30:00.000000Z"
+          description: User creation timestamp in Jalali format (Y/m/d H:i)
+          example: "1404/04/26 15:30"
         updated_at:
           type: string
-          format: date-time
-          description: User last update timestamp
-          example: "2025-07-17T11:30:00.000000Z"
+          description: User last update timestamp in Jalali format (Y/m/d H:i)
+          example: "1404/04/26 15:30"
         gym:
           $ref: '#/components/schemas/Gym'
 
@@ -326,16 +433,24 @@ components:
           type: integer
           description: Associated user ID
           example: 1
+        logo:
+          type: string
+          nullable: true
+          description: Path to gym logo file (stored in public/storage/gyms/logos)
+          example: "gyms/logos/logo_123.png"
+        address:
+          type: string
+          nullable: true
+          description: Gym address
+          example: "تهران، خیابان ولیعصر، پلاک 123"
         created_at:
           type: string
-          format: date-time
-          description: Gym creation timestamp
-          example: "2025-07-17T11:30:00.000000Z"
+          description: Gym creation timestamp in Jalali format (Y/m/d H:i)
+          example: "1404/04/26 15:30"
         updated_at:
           type: string
-          format: date-time
-          description: Gym last update timestamp
-          example: "2025-07-17T11:30:00.000000Z"
+          description: Gym last update timestamp in Jalali format (Y/m/d H:i)
+          example: "1404/04/26 15:30"
 
     LoginSuccessResponse:
       allOf:
@@ -391,6 +506,24 @@ components:
             first_name:
               - "The first name field is required."
 
+    RegisterSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UserWithGym'
+          description: Successful registration response with user and gym data
+
+    UserWithGym:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            gym:
+              $ref: '#/components/schemas/Gym'
+          description: User model with loaded gym relationship
+
   securitySchemes:
     BearerAuth:
       type: http
@@ -416,22 +549,32 @@ security:
       example: "09123456789"
 
     examples:
-    RegisterUserExample:
-      summary: Complete user registration example
-      value:
-        first_name: "علی"
-        last_name: "احمدی"
-        phone_number: "09123456789"
-        gym_name: "باشگاه ورزشی نوین"
+      RegisterUserExample:
+        summary: Complete user registration example
+        value:
+          first_name: "علی"
+          last_name: "احمدی"
+          phone_number: "09123456789"
+          gym_name: "باشگاه ورزشی نوین"
+          logo: "(binary file)"
+          address: "تهران، خیابان ولیعصر، پلاک 123"
 
-    LoginExample:
-      summary: Complete login example
-      value:
-        phone_number: "09123456789"
-        otp_code: 12345
+      RegisterUserMinimalExample:
+        summary: Minimal user registration example
+        value:
+          first_name: "علی"
+          last_name: "احمدی"
+          phone_number: "09123456789"
+          gym_name: "باشگاه ورزشی نوین"
+
+      LoginExample:
+        summary: Complete login example
+        value:
+          phone_number: "09123456789"
+          otp_code: 12345
 
     callbacks:
-    OtpExpiration:
+      OtpExpiration:
       '{$request.body#/phone_number}':
         post:
           summary: OTP expiration callback

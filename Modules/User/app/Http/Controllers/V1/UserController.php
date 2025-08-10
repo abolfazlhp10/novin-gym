@@ -11,6 +11,7 @@ use Modules\User\Classes\V1\ResponseMessages;
 use Modules\User\Exceptions\InvalidOtpException;
 use Modules\User\Exceptions\RegistrationFailedException;
 use Modules\User\Http\Requests\V1\LoginUserRequest;
+use Modules\User\Http\Requests\V1\OtpRequest;
 use Modules\User\Http\Requests\V1\RegisterUserRequest;
 use Modules\User\Services\V1\UserService;
 use Modules\User\Transformers\V1\UserResource;
@@ -32,7 +33,7 @@ class UserController extends Controller
         }
     }
 
-    public function sendOtp(LoginUserRequest $request, ApiResponse $response)
+    public function sendOtp(OtpRequest $request, ApiResponse $response)
     {
 
         try {
