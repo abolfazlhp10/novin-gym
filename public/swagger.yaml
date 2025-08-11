@@ -311,6 +311,48 @@ paths:
                   value:
                     message: "کد یکبار مصرف نامعتبر است"
 
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout current user
+      description: |
+        Revoke the current Sanctum access token used for this request and clear the authentication cookie.
+        Only the current token is revoked. To revoke all sessions, call a dedicated endpoint that deletes all tokens.
+      operationId: logoutUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          headers:
+            Set-Cookie:
+              description: Clears authentication token cookie
+              schema:
+                type: string
+              example: "auth_token=; Max-Age=0; HttpOnly; Secure; SameSite=Strict"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                logoutSuccess:
+                  summary: Successful logout response
+                  value:
+                    message: "خروج با موفقیت انجام شد"
+                    data: []
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    message: "Unauthenticated."
+
 components:
   schemas:
     RegisterUserRequest:

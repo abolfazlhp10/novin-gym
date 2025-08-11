@@ -65,4 +65,17 @@ class UserController extends Controller
             return $response->errorResponse(ResponseMessages::OTP_IS_FALSE, 422);
         }
     }
+
+    public function logout(ApiResponse $response): JsonResponse
+    {
+        $user = request()->user();
+
+        if ($user) {
+            $user->currentAccessToken()?->delete();
+        }
+
+        cookie()->queue(cookie()->forget('auth_token'));
+
+        return $response->successResponse(ResponseMessages::LOGOUT_SUCCESS, [], 200);
+    }
 }
