@@ -38,11 +38,11 @@ class ProgramController extends Controller
         return $this->apiResponse->successResponse(ResponseMessages::CREATE_PROGRAM_SUCCESS, $program, 200);
     }
 
-    private function generateSafeFilename(string $name): string
+    public function show(Program $program)
     {
-        return preg_replace('/[^\p{L}\p{N}\s_-]/u', '', $name);
+        return $this->apiResponse->successResponse( ResponseMessages::GET_PROGRAM_SUCCESS, $program , 200);
     }
-
+  
     public function download(Program $program)
     {
         $this->authorize('download',$program);
@@ -63,4 +63,10 @@ class ProgramController extends Controller
         return $this->apiResponse->successResponse(ResponseMessages::DELETE_PROGRAM_SUCCESS, [], 200);
 
     }
+
+    private function generateSafeFilename(string $name): string
+    {
+        return preg_replace('/[^\p{L}\p{N}\s_-]/u', '', $name);
+    }
+
 }
