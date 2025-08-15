@@ -20,6 +20,13 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'phone_number.unique' => 'این شماره موبایل قبلا ثبت نام کرده است.'
+        ];
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
