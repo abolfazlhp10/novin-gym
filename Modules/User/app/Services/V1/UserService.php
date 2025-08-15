@@ -62,7 +62,7 @@ class UserService
             throw new InvalidOtpException('the otp code is incorrect or expired');
         }
 
-        $user = User::firstWhere('phone_number', $phone_number);
+        $user = User::with('gym')->firstWhere('phone_number', $phone_number);
 
         $this->authenticateUser($user);
 
