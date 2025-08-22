@@ -33,15 +33,16 @@ class UserController extends Controller
         }
     }
 
-    public function sendOtp(OtpRequest $request, ApiResponse $response)
+    public function sendOtp(OtpRequest $request, ApiResponse $response): JsonResponse
     {
-
         try {
             $result = $this->userService->sendOtp($request->validated());
 
             if ($result) {
                 return $response->successResponse(ResponseMessages::OTP_SEND_SUCCESS, [], 200);
             }
+            
+            return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
         } catch (SmsSendingFailedException $e) {
             logError('critical', 'SMS Gateway Error', $e);
             return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
@@ -77,5 +78,18 @@ class UserController extends Controller
         cookie()->queue(cookie()->forget('auth_token'));
 
         return $response->successResponse(ResponseMessages::LOGOUT_SUCCESS, [], 200);
+    }
+
+    public function getMe(ApiResponse $response): JsonResponse
+    {
+        $user = request()->user();
+        
+        $user = $user->load('gym');
+
+        if (!$user) {
+            return $response->errorResponse('User not authenticated', 401);
+        }
+
+        return $response->successResponse(ResponseMessages::GET_ME_SUCCESS, new UserResource($user), 200);
     }
 }

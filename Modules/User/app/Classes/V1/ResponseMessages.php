@@ -10,4 +10,5 @@ class ResponseMessages{
     const OTP_IS_FALSE = 'کد یکبار مصرف نامعتبر است';
     const LOGIN_SUCCESS = 'ورود با موفقیت انجام شد';
     const LOGOUT_SUCCESS = 'خروج با موفقیت انجام شد';
+    const GET_ME_SUCCESS = 'اطلاعات کاربر با موفقیت دریافت شد';
 }

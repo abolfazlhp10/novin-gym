@@ -11,8 +11,7 @@ servers:
 tags:
   - name: Authentication
     description: User authentication and registration endpoints
-  - name: Users
-    description: User management operations
+
 
 paths:
   /register:
@@ -353,6 +352,55 @@ paths:
                   value:
                     message: "Unauthenticated."
 
+  /get-me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user information
+      description: |
+        Retrieve the authenticated user's profile information including personal details and associated gym data.
+        This endpoint requires a valid Sanctum authentication token.
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMeSuccessResponse'
+              examples:
+                userInfoSuccess:
+                  summary: Successful user info response
+                  value:
+                    message: "اطلاعات کاربر با موفقیت دریافت شد"
+                    data:
+                      id: 1
+                      first_name: "علی"
+                      last_name: "احمدی"
+                      phone_number: "09123456789"
+                      created_at: "1404/04/26 15:30"
+                      updated_at: "1404/04/26 15:30"
+                      gym:
+                        id: 1
+                        name: "باشگاه ورزشی نوین"
+                        logo: "gyms/logos/logo_123.png"
+                        address: "تهران، خیابان ولیعصر، پلاک 123"
+                        created_at: "1404/04/26 15:30"
+                        updated_at: "1404/04/26 15:30"
+        '401':
+          description: Unauthorized - Invalid or missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "User not authenticated"
+
 components:
   schemas:
     RegisterUserRequest:
@@ -556,6 +604,15 @@ components:
             data:
               $ref: '#/components/schemas/UserWithGym'
           description: Successful registration response with user and gym data
+
+    GetMeSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UserWithGym'
+          description: Successful get-me response with current user and gym data
 
     UserWithGym:
       allOf:
