@@ -22,6 +22,12 @@ class ProgramService
         return Program::create($data);
     }
 
+    public function update(Program $program, array $data): Program
+    {
+        $program->update($data);
+        return $program->fresh();
+    }
+
     public function delete(Program $program): void
     {
         $program->delete();

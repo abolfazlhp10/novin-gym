@@ -5,7 +5,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 use Modules\Program\Models\V1\Program;
 
-class StoreProgramRequest extends FormRequest
+class ProgramRequest extends FormRequest
 {
 
     protected function prepareForValidation(): void
@@ -31,7 +31,7 @@ class StoreProgramRequest extends FormRequest
             'meta_data.*'                  => 'required|array',
             'meta_data.*.exercises'        => 'required|array',
             'meta_data.*.exercises.*'      => 'required|array',
-            'meta_data.*.exercises.*.sets' => 'required|string',
+            'meta_data.*.exercises.*.sets' => 'required|integer',
             'meta_data.*.exercises.*.type' => 'required|string',
             'meta_data.*.exercises.*.reps' => 'required|integer|min:0',
             'meta_data.*.exercises.*.rest' => 'required|integer|min:0',
@@ -69,6 +69,6 @@ class StoreProgramRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()->can('create', Program::class);
+        return $this->user()->can('create', Program::class) || $this->user()->can('update', Program::class);
     }
 }

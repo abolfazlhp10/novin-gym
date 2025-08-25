@@ -24,4 +24,16 @@ class ProgramPolicy
         return $user->id === $program->coach_id;
     }
 
+    public function show(User $user, Program $program): bool
+    {
+        return $user->id === $program->coach_id;
+
+    }
+
+    public function update(User $user, Program $program): bool
+    {
+        return $user->id === $program->coach_id;
+
+    }
+
 }
