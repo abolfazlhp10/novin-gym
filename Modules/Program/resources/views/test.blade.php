@@ -11,10 +11,10 @@
 
     <script>
         document.getElementById('downloadBtn').addEventListener('click', function() {
-            fetch('http://localhost:8000/api/V1/programs/5/download', {
+            fetch('http://localhost:8000/api/V1/programs/7/download', {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer 3|mdXMQ4xLmgmWPw7flFo24DiFYS5tLvyw1ggTiW0w751ed7d8',
+                        'Authorization': 'Bearer 13|7jLonyrwiKPtgzzio8HijFzmjO8UdJbFBAgzzUila65baa86',
                         'Accept': 'application/pdf'
                     }
                 })

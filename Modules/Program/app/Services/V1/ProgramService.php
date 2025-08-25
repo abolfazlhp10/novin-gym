@@ -1,7 +1,6 @@
 <?php
 namespace Modules\Program\Services\V1;
 
-use Barryvdh\DomPDF\Facade\Pdf;
 use Modules\Program\Models\V1\Program;
 use Modules\User\Models\V1\User;
 
@@ -33,11 +32,4 @@ class ProgramService
         return Program::findOrFail($programId);
     }
 
-    public function generateProgramPdf(User $user, Program $program)
-    {
-        $pdf = Pdf::loadView('program::pdf', compact('program'));
-
-        return $pdf;
-
-    }
 }

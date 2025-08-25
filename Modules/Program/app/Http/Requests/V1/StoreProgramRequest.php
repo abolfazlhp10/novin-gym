@@ -10,7 +10,11 @@ class StoreProgramRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $meta_data = json_decode($this->input('meta_data'), true);
+        $meta_data = $this->input('meta_data');
+
+        if (is_string($meta_data)) {
+            $meta_data = json_decode($meta_data, true);
+        }
 
         $this->merge([
             'meta_data' => $meta_data,
