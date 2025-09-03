@@ -11,6 +11,8 @@ servers:
 tags:
   - name: Authentication
     description: User authentication and registration endpoints
+  - name: Support
+    description: FAQ and Feedback management endpoints
 
 
 paths:
@@ -401,6 +403,473 @@ paths:
                   value:
                     message: "User not authenticated"
 
+  # Support Module Endpoints
+  /faq:
+    get:
+      tags:
+        - Support
+      summary: Get all FAQs
+      description: |
+        Retrieve all frequently asked questions (FAQs) for users.
+        This endpoint is publicly accessible and does not require authentication.
+      operationId: getFaqs
+      responses:
+        '200':
+          description: FAQs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaqListResponse'
+              examples:
+                faqListSuccess:
+                  summary: Successful FAQ list response
+                  value:
+                    message: "لیست سوالات متداول با موفقیت دریافت شد "
+                    data:
+                      - id: 1
+                        question: "چگونه می‌توانم برنامه تمرینی خود را دریافت کنم؟"
+                        answer: "برای دریافت برنامه تمرینی، ابتدا باید در سیستم ثبت نام کنید و سپس از بخش برنامه‌ها، برنامه مورد نظر خود را انتخاب کنید."
+                        created_at: "2025-08-31T10:32:00.000000Z"
+                        updated_at: "2025-08-31T10:32:00.000000Z"
+                      - id: 2
+                        question: "آیا امکان تغییر برنامه تمرینی وجود دارد؟"
+                        answer: "بله، شما می‌توانید با مراجعه به بخش برنامه‌ها، برنامه تمرینی خود را تغییر دهید."
+                        created_at: "2025-08-31T10:33:00.000000Z"
+                        updated_at: "2025-08-31T10:33:00.000000Z"
+
+  /feedback:
+    post:
+      tags:
+        - Support
+      summary: Submit feedback
+      description: |
+        Submit user feedback to the support team.
+        This endpoint requires authentication and automatically associates the feedback with the authenticated user.
+      operationId: submitFeedback
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackStoreRequest'
+            examples:
+              validFeedback:
+                summary: Valid feedback submission
+                value:
+                  feedback: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+      responses:
+        '201':
+          description: Feedback submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackCreateResponse'
+              examples:
+                feedbackSuccess:
+                  summary: Successful feedback submission
+                  value:
+                    message: "بازخورد شما با موفقیت ارسال شد"
+                    data:
+                      id: 1
+                      user_id: 1
+                      feedback: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+                      created_at: "2025-08-31T10:35:00.000000Z"
+                      updated_at: "2025-08-31T10:35:00.000000Z"
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation error response
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      feedback:
+                        - "The feedback field is required."
+
+  /admin/faqs:
+    get:
+      tags:
+        - Support
+      summary: Get all FAQs (Admin)
+      description: |
+        Retrieve all FAQs for admin management.
+        This endpoint requires admin authentication and role.
+      operationId: getAdminFaqs
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: FAQs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaqListResponse'
+              examples:
+                adminFaqListSuccess:
+                  summary: Successful admin FAQ list response
+                  value:
+                    message: "لیست سوالات متداول با موفقیت دریافت شد "
+                    data:
+                      - id: 1
+                        question: "چگونه می‌توانم برنامه تمرینی خود را دریافت کنم؟"
+                        answer: "برای دریافت برنامه تمرینی، ابتدا باید در سیستم ثبت نام کنید و سپس از بخش برنامه‌ها، برنامه مورد نظر خود را انتخاب کنید."
+                        created_at: "2025-08-31T10:32:00.000000Z"
+                        updated_at: "2025-08-31T10:32:00.000000Z"
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '403':
+          description: Forbidden - Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Insufficient permissions
+                  value:
+                    message: "This action is unauthorized."
+
+    post:
+      tags:
+        - Support
+      summary: Create new FAQ (Admin)
+      description: |
+        Create a new FAQ entry.
+        This endpoint requires admin authentication and role.
+      operationId: createFaq
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaqStoreRequest'
+            examples:
+              validFaq:
+                summary: Valid FAQ creation
+                value:
+                  question: "آیا امکان تغییر برنامه تمرینی وجود دارد؟"
+                  answer: "بله، شما می‌توانید با مراجعه به بخش برنامه‌ها، برنامه تمرینی خود را تغییر دهید."
+      responses:
+        '200':
+          description: FAQ created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaqCreateResponse'
+              examples:
+                faqCreateSuccess:
+                  summary: Successful FAQ creation
+                  value:
+                    message: "سوال و جواب با موفقیت اضافه شد"
+                    data:
+                      id: 3
+                      question: "آیا امکان تغییر برنامه تمرینی وجود دارد؟"
+                      answer: "بله، شما می‌توانید با مراجعه به بخش برنامه‌ها، برنامه تمرینی خود را تغییر دهید."
+                      created_at: "2025-08-31T10:40:00.000000Z"
+                      updated_at: "2025-08-31T10:40:00.000000Z"
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '403':
+          description: Forbidden - Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Insufficient permissions
+                  value:
+                    message: "This action is unauthorized."
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation error response
+                  value:
+                    message: "The given data was invalid."
+                    errors:
+                      question:
+                        - "The question field is required."
+                      answer:
+                        - "The answer field is required."
+
+  /admin/faqs/{faq}:
+    delete:
+      tags:
+        - Support
+      summary: Delete FAQ (Admin)
+      description: |
+        Delete a specific FAQ entry by ID.
+        This endpoint requires admin authentication and role.
+      operationId: deleteFaq
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: faq
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: FAQ ID
+          example: 1
+      responses:
+        '200':
+          description: FAQ deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                faqDeleteSuccess:
+                  summary: Successful FAQ deletion
+                  value:
+                    message: "سوال و جواب با موفقیت حذف شد"
+                    data: []
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '403':
+          description: Forbidden - Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Insufficient permissions
+                  value:
+                    message: "This action is unauthorized."
+        '404':
+          description: FAQ not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  summary: FAQ not found
+                  value:
+                    message: "No query results for model [Modules\\Support\\Models\\Faq] 999"
+
+  /admin/feedbacks:
+    get:
+      tags:
+        - Support
+      summary: Get all feedbacks (Admin)
+      description: |
+        Retrieve all user feedbacks with pagination for admin management.
+        This endpoint requires admin authentication and role.
+      operationId: getAdminFeedbacks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Number of items per page
+          example: 10
+      responses:
+        '200':
+          description: Feedbacks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackListResponse'
+              examples:
+                adminFeedbackListSuccess:
+                  summary: Successful admin feedback list response
+                  value:
+                    message: "لیست بازخوردها با موفقیت دریافت شد "
+                    data:
+                      current_page: 1
+                      data:
+                        - id: 1
+                          user_id: 1
+                          feedback: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+                          created_at: "2025-08-31T10:35:00.000000Z"
+                          updated_at: "2025-08-31T10:35:00.000000Z"
+                        - id: 2
+                          user_id: 2
+                          feedback: "سایت خیلی کاربرپسند است و کار با آن راحت است."
+                          created_at: "2025-08-31T10:36:00.000000Z"
+                          updated_at: "2025-08-31T10:36:00.000000Z"
+                      first_page_url: "http://localhost:8000/api/V1/admin/feedbacks?page=1"
+                      from: 1
+                      last_page: 1
+                      last_page_url: "http://localhost:8000/api/V1/admin/feedbacks?page=1"
+                      links:
+                        - url: null
+                          label: "&laquo; Previous"
+                          active: false
+                        - url: "http://localhost:8000/api/V1/admin/feedbacks?page=1"
+                          label: "1"
+                          active: true
+                        - url: null
+                          label: "Next &raquo;"
+                          active: false
+                      next_page_url: null
+                      path: "http://localhost:8000/api/V1/admin/feedbacks"
+                      per_page: 10
+                      prev_page_url: null
+                      to: 2
+                      total: 2
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '403':
+          description: Forbidden - Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Insufficient permissions
+                  value:
+                    message: "This action is unauthorized."
+
+  /admin/feedbacks/{feedback}:
+    get:
+      tags:
+        - Support
+      summary: Get specific feedback (Admin)
+      description: |
+        Retrieve a specific feedback by ID for admin management.
+        This endpoint requires admin authentication and role.
+      operationId: getAdminFeedback
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: feedback
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Feedback ID
+          example: 1
+      responses:
+        '200':
+          description: Feedback retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackDetailResponse'
+              examples:
+                adminFeedbackSuccess:
+                  summary: Successful admin feedback detail response
+                  value:
+                    message: "بازخورد با موفقیت دریافت شد "
+                    data:
+                      id: 1
+                      user_id: 1
+                      feedback: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+                      created_at: "2025-08-31T10:35:00.000000Z"
+                      updated_at: "2025-08-31T10:35:00.000000Z"
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Unauthorized access
+                  value:
+                    message: "Unauthenticated."
+        '403':
+          description: Forbidden - Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Insufficient permissions
+                  value:
+                    message: "This action is unauthorized."
+        '404':
+          description: Feedback not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  summary: Feedback not found
+                  value:
+                    message: "No query results for model [Modules\\Support\\Models\\Feedback] 999"
+
 components:
   schemas:
     RegisterUserRequest:
@@ -622,6 +1091,211 @@ components:
             gym:
               $ref: '#/components/schemas/Gym'
           description: User model with loaded gym relationship
+
+    # Support Module Schemas
+    Faq:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique FAQ identifier
+          example: 1
+        question:
+          type: string
+          description: FAQ question
+          example: "چگونه می‌توانم برنامه تمرینی خود را دریافت کنم؟"
+        answer:
+          type: string
+          description: FAQ answer
+          example: "برای دریافت برنامه تمرینی، ابتدا باید در سیستم ثبت نام کنید و سپس از بخش برنامه‌ها، برنامه مورد نظر خود را انتخاب کنید."
+        created_at:
+          type: string
+          format: date-time
+          description: FAQ creation timestamp
+          example: "2025-08-31T10:32:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: FAQ last update timestamp
+          example: "2025-08-31T10:32:00.000000Z"
+
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique feedback identifier
+          example: 1
+        user_id:
+          type: integer
+          description: ID of the user who submitted the feedback
+          example: 1
+        feedback:
+          type: string
+          description: Feedback content
+          example: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+        created_at:
+          type: string
+          format: date-time
+          description: Feedback creation timestamp
+          example: "2025-08-31T10:35:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Feedback last update timestamp
+          example: "2025-08-31T10:35:00.000000Z"
+
+    FaqStoreRequest:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: FAQ question (required, max 1000 characters)
+          example: "آیا امکان تغییر برنامه تمرینی وجود دارد؟"
+        answer:
+          type: string
+          minLength: 1
+          maxLength: 5000
+          description: FAQ answer (required, max 5000 characters)
+          example: "بله، شما می‌توانید با مراجعه به بخش برنامه‌ها، برنامه تمرینی خود را تغییر دهید."
+
+    FeedbackStoreRequest:
+      type: object
+      required:
+        - feedback
+      properties:
+        feedback:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: Feedback content (required, max 2000 characters)
+          example: "برنامه تمرینی بسیار عالی بود و نتایج خوبی گرفتم. ممنون از تیم پشتیبانی."
+
+    FaqListResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Faq'
+          description: Successful FAQ list response
+
+    FaqCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Faq'
+          description: Successful FAQ creation response
+
+    FeedbackCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Feedback'
+          description: Successful feedback creation response
+
+    FeedbackDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Feedback'
+          description: Successful feedback detail response
+
+    FeedbackListResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PaginatedFeedbackData'
+          description: Successful feedback list response with pagination
+
+    PaginatedFeedbackData:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          description: Current page number
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feedback'
+          description: Array of feedback items
+        first_page_url:
+          type: string
+          nullable: true
+          description: URL to first page
+          example: "http://localhost:8000/api/V1/admin/feedbacks?page=1"
+        from:
+          type: integer
+          nullable: true
+          description: Starting item number
+          example: 1
+        last_page:
+          type: integer
+          description: Last page number
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+          description: URL to last page
+          example: "http://localhost:8000/api/V1/admin/feedbacks?page=1"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+                description: Link URL
+              label:
+                type: string
+                description: Link label
+                example: "1"
+              active:
+                type: boolean
+                description: Whether this is the active page
+          description: Pagination links
+        next_page_url:
+          type: string
+          nullable: true
+          description: URL to next page
+        path:
+          type: string
+          description: Base path for pagination
+          example: "http://localhost:8000/api/V1/admin/feedbacks"
+        per_page:
+          type: integer
+          description: Items per page
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+          description: URL to previous page
+        to:
+          type: integer
+          nullable: true
+          description: Ending item number
+          example: 2
+        total:
+          type: integer
+          description: Total number of items
+          example: 2
 
   securitySchemes:
     BearerAuth:
