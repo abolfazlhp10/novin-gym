@@ -11,7 +11,10 @@ class FaqStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'question'=>['required','string','max:255'],
+            'answer' =>['required','string','max:2000']
+        ];
     }
 
     /**
@@ -19,6 +22,6 @@ class FaqStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasRole('admin');
     }
 }

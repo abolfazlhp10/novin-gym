@@ -10,5 +10,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::post('/faqs', [FaqController::class, 'store']);
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']);
     Route::get('/feedbacks', [FeedbackController::class, 'index']);
-    Route::get('/feedbacks/{feedback}', [FeedbackController::class, 'index']);
+    Route::get('/feedbacks/{feedback}', [FeedbackController::class, 'show']);
+    
 });

@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Support\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -11,7 +10,9 @@ class FeedbackStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'feedback' => ['required', 'string', 'max:255'],
+        ];
     }
 
     /**
@@ -19,6 +20,6 @@ class FeedbackStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() ? true : false;
     }
 }
