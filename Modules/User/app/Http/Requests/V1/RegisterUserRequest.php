@@ -18,6 +18,7 @@ class RegisterUserRequest extends FormRequest
             'gym_name' => ['required', 'string', 'min:3', 'max:255'],
             'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
             'address' => ['nullable', 'string', 'min:3'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'phone_number',
+        'password',
     ];
 
     /**
@@ -30,7 +31,9 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $hidden = [];
+    protected $hidden = [
+        'password',
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -38,6 +41,7 @@ class User extends Authenticatable
      * @return array<string, string>
      */
     protected $casts = [
+        'password' => 'hashed',
     ];
 
     protected $guard_name = 'api';
