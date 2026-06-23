@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Support\Http\Controllers\V1\Admin;
 
 use App\Classes\ApiResponse;
@@ -10,8 +11,7 @@ use Modules\Support\Models\Faq;
 
 class FaqController extends Controller
 {
-    public function __construct(private ApiResponse $apiResponse)
-    {}
+    public function __construct(private ApiResponse $apiResponse) {}
 
     public function index(): JsonResponse
     {

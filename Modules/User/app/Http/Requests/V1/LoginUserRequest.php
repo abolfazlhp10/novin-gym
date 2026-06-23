@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\User\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +13,7 @@ class LoginUserRequest extends FormRequest
     {
         return [
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'exists:users'],
-            'otp_code'     => ['required', 'integer', 'digits:5'],
+            'otp_code' => ['required', 'integer', 'digits:5'],
         ];
 
     }

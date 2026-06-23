@@ -12,6 +12,7 @@ use Modules\Exercise\Transformers\V1\CategoryResource;
 class CategoryController extends Controller
 {
     public function __construct(private CategoryService $categoryService, private ApiResponse $apiResponse) {}
+
     public function index(): JsonResponse
     {
         $categories = $this->categoryService->getAll();

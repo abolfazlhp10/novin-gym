@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Program\Transformers\V1;
 
 use Illuminate\Http\Request;
@@ -13,14 +14,14 @@ class ProgramResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'coach_id'     => $this->coach_id,
-            'user_name'    => $this->user_name,
+            'id' => $this->id,
+            'coach_id' => $this->coach_id,
+            'user_name' => $this->user_name,
             'phone_number' => $this->phone_number,
-            'meta_data'    => $this->meta_data,
-            'description'  => $this->description,
-            'created_at'   => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
-            'updated_at'   => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
+            'meta_data' => $this->meta_data,
+            'description' => $this->description,
+            'created_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
+            'updated_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
         ];
     }
 }

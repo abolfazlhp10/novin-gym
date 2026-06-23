@@ -12,6 +12,7 @@ use Modules\Exercise\Transformers\V1\EquipmentResource;
 class EquipmentController extends Controller
 {
     public function __construct(private EquipmentService $equipmentService, private ApiResponse $apiResponse) {}
+
     public function index(): JsonResponse
     {
         $equipments = $this->equipmentService->getAll();

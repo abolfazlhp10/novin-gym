@@ -35,18 +35,18 @@ return [
         ],
     ],
 
-    'sms'=>[
-        
+    'sms' => [
+
         'driver' => env('SMS_DRIVER'),
 
         'farazsms' => [
-            'base_url'=>env('FARAZSMS_BASEURL','https://ippanel.com/patterns/pattern'),
+            'base_url' => env('FARAZSMS_BASEURL', 'https://ippanel.com/patterns/pattern'),
             'username' => env('FARAZSMS_USERNAME'),
             'password' => env('FARAZSMS_PASSWORD'),
             'from' => env('FARAZSMS_FROM'),
             'pattern_code' => env('FARAZSMS_PATTERN_CODE'),
         ],
 
-    ]
+    ],
 
 ];

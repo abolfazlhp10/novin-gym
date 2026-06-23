@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Support\Http\Controllers\V1\Admin;
 
 use App\Classes\ApiResponse;
@@ -9,12 +10,12 @@ use Modules\Support\Models\Feedback;
 
 class FeedbackController extends Controller
 {
-    public function __construct(private ApiResponse $apiResponse)
-    {}
+    public function __construct(private ApiResponse $apiResponse) {}
 
     public function index(): JsonResponse
     {
         $feedbacks = Feedback::paginate(10);
+
         return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_FEEDBACKS_SUCCESS, $feedbacks, 200);
     }
 
@@ -22,5 +23,4 @@ class FeedbackController extends Controller
     {
         return $this->apiResponse->successResponse(ResponseMessages::GET_FEEDBACK_SUCCESS, $feedback, 200);
     }
-
 }

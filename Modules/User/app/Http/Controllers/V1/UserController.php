@@ -41,16 +41,19 @@ class UserController extends Controller
             if ($result) {
                 return $response->successResponse(ResponseMessages::OTP_SEND_SUCCESS, [], 200);
             }
-            
+
             return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
         } catch (SmsSendingFailedException $e) {
             logError('critical', 'SMS Gateway Error', $e);
+
             return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
         } catch (RequestException $e) {
             logError('critical', 'SMS Service Network Error', $e);
+
             return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
         } catch (Throwable $th) {
             logError('critical', 'SMS sending failed', $th);
+
             return $response->errorResponse(ResponseMessages::OTP_SEND_FAILURE, 500);
         }
     }
@@ -83,10 +86,10 @@ class UserController extends Controller
     public function getMe(ApiResponse $response): JsonResponse
     {
         $user = request()->user();
-        
+
         $user = $user->load('gym');
 
-        if (!$user) {
+        if (! $user) {
             return $response->errorResponse('User not authenticated', 401);
         }
 

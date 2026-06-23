@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Contracts\SmsServiceInterface;
@@ -18,31 +19,31 @@ class FarazsmsService implements SmsServiceInterface
     ) {}
 
     public function sendOtp(string $to, int $otp_code): bool
-    {       
-            $queryData = [
-                'username'     => $this->username,
-                'password'     => $this->password,
-                'from'         => $this->from, 
-                'to'           => $to,
-                'input_data'   => json_encode([
-                    'verification-code' => $otp_code,
-                ]),
-                'pattern_code' => $this->pattern_code,
-            ];
+    {
+        $queryData = [
+            'username' => $this->username,
+            'password' => $this->password,
+            'from' => $this->from,
+            'to' => $to,
+            'input_data' => json_encode([
+                'verification-code' => $otp_code,
+            ]),
+            'pattern_code' => $this->pattern_code,
+        ];
 
-            $queryString = http_build_query($queryData);
-            $queryString = str_replace('%2B', '+', $queryString); 
+        $queryString = http_build_query($queryData);
+        $queryString = str_replace('%2B', '+', $queryString);
 
-            $fullUrl = $this->base_url . '?' . $queryString;
+        $fullUrl = $this->base_url.'?'.$queryString;
 
-            $response = Http::timeout($this->timeout)
-                ->connectTimeout($this->connect_timeout)
-                ->get($fullUrl);
+        $response = Http::timeout($this->timeout)
+            ->connectTimeout($this->connect_timeout)
+            ->get($fullUrl);
 
-            if ($response->successful()) {
-                return true;
-            }
+        if ($response->successful()) {
+            return true;
+        }
 
-            throw new SmsSendingFailedException($response);   
+        throw new SmsSendingFailedException($response);
     }
 }

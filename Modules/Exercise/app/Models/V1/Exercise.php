@@ -2,15 +2,14 @@
 
 namespace Modules\Exercise\Models\V1;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
 // use Modules\Exercise\Database\Factories\V1/ExerciseFactory;
 
 class Exercise extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name_fa','name_en','category_id','equipment_id','description','video'];
-
-
+    protected $fillable = ['name_fa', 'name_en', 'category_id', 'equipment_id', 'description', 'video'];
 }

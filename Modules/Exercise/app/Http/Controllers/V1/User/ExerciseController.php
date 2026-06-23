@@ -12,6 +12,7 @@ use Modules\Exercise\Transformers\V1\ExerciseResource;
 class ExerciseController extends Controller
 {
     public function __construct(private ExerciseService $exerciseService, private ApiResponse $apiResponse) {}
+
     public function index(): JsonResponse
     {
         $exercises = $this->exerciseService->getAll();

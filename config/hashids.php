@@ -29,8 +29,8 @@ return [
     'connections' => [
 
         'main' => [
-            'salt' => env('HASHIDS_MAIN_SALT' , ''),
-            'length' => env('HASHIDS_MAIN_LENGTH' , 3),
+            'salt' => env('HASHIDS_MAIN_SALT', ''),
+            'length' => env('HASHIDS_MAIN_LENGTH', 3),
             // 'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
         ],
 

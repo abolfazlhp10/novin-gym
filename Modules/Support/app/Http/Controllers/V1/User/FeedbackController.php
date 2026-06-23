@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Support\Http\Controllers\V1\User;
 
 use App\Classes\ApiResponse;
@@ -10,13 +11,12 @@ use Modules\Support\Models\Feedback;
 
 class FeedbackController extends Controller
 {
-    public function __construct(private ApiResponse $apiResponse)
-    {}
+    public function __construct(private ApiResponse $apiResponse) {}
 
     public function store(FeedbackStoreRequest $request): JsonResponse
     {
         $feedback = Feedback::create([
-            'user_id'  => auth()->user()->id,
+            'user_id' => auth()->user()->id,
             'feedback' => $request->feedback,
         ]);
 

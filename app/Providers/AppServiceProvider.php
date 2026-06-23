@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers;
 
 use App\Classes\ApiResponse;
@@ -23,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SmsServiceInterface::class, function () {
 
             if (config('services.sms.driver') == 'testing') {
-                return new TestingSmsService();
+                return new TestingSmsService;
             }
 
             $config = config('services.sms.farazsms');
@@ -38,10 +39,10 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function  bindApiResonse()
+    private function bindApiResonse()
     {
-        $this->app->singleton(ApiResponse::class,function($app){
-            return new ApiResponse();
+        $this->app->singleton(ApiResponse::class, function ($app) {
+            return new ApiResponse;
         });
     }
 

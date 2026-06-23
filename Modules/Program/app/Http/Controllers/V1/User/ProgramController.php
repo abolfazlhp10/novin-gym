@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Program\Http\Controllers\V1\User;
 
 use App\Classes\ApiResponse;
@@ -24,23 +25,24 @@ class ProgramController extends Controller
         $this->user = $request->user();
     }
 
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
         $programs = ProgramResource::collection($this->programService->getAll($this->user));
 
         return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_PROGRAMS_SUCCESS, $programs, 200);
     }
 
-    public function store(ProgramRequest $request) : JsonResponse
+    public function store(ProgramRequest $request): JsonResponse
     {
         $program = new ProgramResource($this->programService->create($this->user, $request->validated()));
 
         return $this->apiResponse->successResponse(ResponseMessages::CREATE_PROGRAM_SUCCESS, $program, 200);
     }
 
-    public function show(Program $program) : JsonResponse
+    public function show(Program $program): JsonResponse
     {
         $this->authorize('show', $program);
+
         return $this->apiResponse->successResponse(ResponseMessages::GET_PROGRAM_SUCCESS, $program, 200);
     }
 
@@ -48,7 +50,7 @@ class ProgramController extends Controller
     {
         $this->authorize('download', $program);
 
-        $file_name = $this->generateSafeFilename($program->user_name . '-' . time());
+        $file_name = $this->generateSafeFilename($program->user_name.'-'.time());
 
         return Pdf::view('program::pdf', compact('program'))
             ->format('a4')
@@ -65,7 +67,7 @@ class ProgramController extends Controller
         return $this->apiResponse->successResponse(ResponseMessages::UPDATE_PROGRAM_SUCCESS, $program, 200);
     }
 
-    public function destroy(Program $program) : JsonResponse
+    public function destroy(Program $program): JsonResponse
     {
         $this->authorize('delete', $program);
 
@@ -79,5 +81,4 @@ class ProgramController extends Controller
     {
         return preg_replace('/[^\p{L}\p{N}\s_-]/u', '', $name);
     }
-
 }

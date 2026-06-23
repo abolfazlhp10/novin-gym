@@ -12,10 +12,10 @@ if (! function_exists('logError')) {
         }
 
         Log::$log_level($message, [
-            "exception_message" => $e->getMessage(),
-            "exception_file"    => $e->getFile(),
-            "exception_line"    => $e->getLine(),
-            "exception_trace"   => $e->getTraceAsString(),
+            'exception_message' => $e->getMessage(),
+            'exception_file' => $e->getFile(),
+            'exception_line' => $e->getLine(),
+            'exception_trace' => $e->getTraceAsString(),
         ]);
 
     }
@@ -23,7 +23,7 @@ if (! function_exists('logError')) {
 }
 
 if (! function_exists('hashid')) {
-    
+
     function hashid($value)
     {
         $hashids = new Hashids(env('HASHIDS_MAIN_SALT'), env('HASHIDS_MAIN_LENGTH'));
@@ -36,9 +36,7 @@ if (! function_exists('hashid')) {
             }
 
             return $decoded[0];
-        }
-
-        elseif (is_integer($value)) {
+        } elseif (is_int($value)) {
             return $hashids->encode($value);
         }
 

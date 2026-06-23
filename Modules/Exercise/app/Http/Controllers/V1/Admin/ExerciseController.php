@@ -13,9 +13,7 @@ use Modules\Exercise\Transformers\V1\ExerciseResource;
 
 class ExerciseController extends Controller
 {
-
-    public function __construct(private ExerciseService $exerciseService, private ApiResponse $apiResponse)
-    {}
+    public function __construct(private ExerciseService $exerciseService, private ApiResponse $apiResponse) {}
 
     /**
      * Display a listing of the resource.
@@ -33,6 +31,7 @@ class ExerciseController extends Controller
     public function store(StoreExerciseRequest $request)
     {
         $exercise = new ExerciseResource($this->exerciseService->create($request->validated()));
+
         return $this->apiResponse->successResponse(ResponseMessages::GET_EXERCISE_SUCCESS, $exercise, 201);
     }
 
@@ -42,6 +41,7 @@ class ExerciseController extends Controller
     public function show(Exercise $exercise)
     {
         $exercise = new ExerciseResource($exercise);
+
         return $this->apiResponse->successResponse(ResponseMessages::GET_EXERCISE_SUCCESS, $exercise, 200);
     }
 
@@ -51,6 +51,7 @@ class ExerciseController extends Controller
     public function update(Exercise $exercise, UpdateExerciseRequest $request)
     {
         $exercise = new ExerciseResource($this->exerciseService->update($exercise, $request->validated()));
+
         return $this->apiResponse->successResponse(ResponseMessages::UPDATE_EXERCISE_SUCCESS, $exercise, 200);
     }
 
@@ -60,6 +61,7 @@ class ExerciseController extends Controller
     public function destroy(Exercise $exercise)
     {
         $this->exerciseService->delete($exercise);
+
         return $this->apiResponse->successResponse(ResponseMessages::DELETE_EXERCISE_SUCCESS, [], 200);
     }
 }

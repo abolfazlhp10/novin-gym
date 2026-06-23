@@ -2,19 +2,17 @@
 
 namespace Modules\User\Models\V1;
 
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Modules\User\Models\V1\Gym;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens ,HasRoles;
+    use HasApiTokens, HasFactory, HasRoles ,Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -39,7 +37,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected  $casts = [
+    protected $casts = [
     ];
 
     protected $guard_name = 'api';

@@ -2,8 +2,8 @@
 
 namespace Modules\User\app\Http\Requests\V1;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
@@ -30,15 +30,13 @@ class ValidatePhoneNumberRequest extends FormRequest
                 'string',
                 'regex:/^09\d{9}$/',
                 'max:11',
-                'unique:users,phone_number'
+                'unique:users,phone_number',
             ],
         ];
     }
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
     public function messages(): array
     {
@@ -53,8 +51,6 @@ class ValidatePhoneNumberRequest extends FormRequest
 
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
     public function attributes(): array
     {
@@ -66,7 +62,6 @@ class ValidatePhoneNumberRequest extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException

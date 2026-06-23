@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Exercise\Transformers\V1;
 
 use Illuminate\Http\Request;
@@ -13,9 +14,9 @@ class EquipmentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name_fa'    => $this->name_fa,
-            'name_en'    => $this->name_en,
+            'id' => $this->id,
+            'name_fa' => $this->name_fa,
+            'name_en' => $this->name_en,
             'created_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
             'updated_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
         ];
