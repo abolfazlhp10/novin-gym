@@ -64,10 +64,12 @@ class UserController extends Controller
         try {
             if ($request->filled('otp_code')) {
                 $user = $this->userService->login($request->validated());
+
                 return $response->successResponse(ResponseMessages::LOGIN_SUCCESS, new UserResource($user), 200);
             }
 
             $user = $this->userService->loginWithPassword($request->validated());
+
             return $response->successResponse(ResponseMessages::LOGIN_SUCCESS, new UserResource($user), 200);
         } catch (InvalidOtpException $e) {
             return $response->errorResponse(ResponseMessages::OTP_IS_FALSE, 422);

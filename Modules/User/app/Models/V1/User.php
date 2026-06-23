@@ -40,7 +40,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected  $casts = [
+    protected $casts = [
         'password' => 'hashed',
     ];
 

@@ -10,7 +10,7 @@ class LoginWithPasswordRequest extends FormRequest
     {
         return [
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'exists:users,phone_number'],
-            'password'     => ['required', 'string'],
+            'password' => ['required', 'string'],
         ];
     }
 

@@ -9,7 +9,7 @@ Route::post('send-otp', [UserController::class, 'sendOtp']);
 
 Route::post('login', [UserController::class, 'login']);
 
-Route::middleware(['auth:sanctum'])->group(function(){
-    Route::post('logout', [UserController::class,'logout']);
-    Route::get('profile', [UserController::class,'profile']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::get('profile', [UserController::class, 'profile']);
 });

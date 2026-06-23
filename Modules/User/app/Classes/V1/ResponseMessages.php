@@ -17,6 +17,8 @@ class ResponseMessages
     const LOGIN_SUCCESS = 'ورود با موفقیت انجام شد';
 
     const LOGOUT_SUCCESS = 'خروج با موفقیت انجام شد';
+
     const GET_PROFILE_SUCCESS = 'اطلاعات کاربر با موفقیت دریافت شد';
+
     const PASSWORD_IS_FALSE = 'شماره موبایل یا رمز عبور نادرست است';
 }
