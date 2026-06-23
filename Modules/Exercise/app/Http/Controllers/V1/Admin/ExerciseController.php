@@ -9,7 +9,6 @@ use Modules\Exercise\Http\Requests\V1\StoreExerciseRequest;
 use Modules\Exercise\Http\Requests\V1\UpdateExerciseRequest;
 use Modules\Exercise\Models\V1\Exercise;
 use Modules\Exercise\Services\V1\ExerciseService;
-use Modules\Exercise\Transformers\V1\ExerciseCollection;
 use Modules\Exercise\Transformers\V1\ExerciseResource;
 
 class ExerciseController extends Controller
@@ -23,8 +22,9 @@ class ExerciseController extends Controller
      */
     public function index()
     {
-        $exercises = new ExerciseCollection($this->exerciseService->getAll());
-        return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_EXERCISES_SUCCESS, $exercises, 200);
+        $exercises = $this->exerciseService->getAll();
+
+        return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_EXERCISES_SUCCESS, ExerciseResource::collection($exercises), 200);
     }
 
     /**

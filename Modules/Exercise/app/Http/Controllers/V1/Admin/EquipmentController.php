@@ -9,7 +9,6 @@ use Modules\Exercise\Services\V1\EquipmentService;
 use App\Classes\ApiResponse;
 use Modules\Exercise\Http\Requests\V1\StoreEquipmentRequest;
 use Modules\Exercise\Http\Requests\V1\UpdateEquipmentRequest;
-use Modules\Exercise\Transformers\V1\EquipmentCollection;
 use Modules\Exercise\Transformers\V1\EquipmentResource;
 use Modules\Exercise\Classes\V1\ResponseMessages;
 
@@ -23,8 +22,8 @@ class EquipmentController extends Controller
      */
     public function index()
     {
-        $equipments = new EquipmentCollection($this->equipmentService->getAll());
-        return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_EQUIPMENTS_SUCCESS, $equipments, 200);
+        $equipments = $this->equipmentService->getAll();
+        return $this->apiResponse->successResponse(ResponseMessages::GET_ALL_EQUIPMENTS_SUCCESS, EquipmentResource::collection($equipments), 200);
     }
 
     /**
