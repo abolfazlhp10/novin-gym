@@ -9,6 +9,7 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Modules\User\Classes\V1\ResponseMessages;
 use Modules\User\Exceptions\InvalidOtpException;
+use Modules\User\Exceptions\InvalidPasswordException;
 use Modules\User\Exceptions\RegistrationFailedException;
 use Modules\User\Http\Requests\V1\LoginUserRequest;
 use Modules\User\Http\Requests\V1\OtpRequest;
@@ -61,12 +62,17 @@ class UserController extends Controller
     public function login(LoginUserRequest $request, ApiResponse $response): JsonResponse
     {
         try {
+            if ($request->filled('otp_code')) {
+                $user = $this->userService->login($request->validated());
+                return $response->successResponse(ResponseMessages::LOGIN_SUCCESS, new UserResource($user), 200);
+            }
 
-            $user = $this->userService->login($request->validated());
-
+            $user = $this->userService->loginWithPassword($request->validated());
             return $response->successResponse(ResponseMessages::LOGIN_SUCCESS, new UserResource($user), 200);
         } catch (InvalidOtpException $e) {
             return $response->errorResponse(ResponseMessages::OTP_IS_FALSE, 422);
+        } catch (InvalidPasswordException $e) {
+            return $response->errorResponse(ResponseMessages::PASSWORD_IS_FALSE, 422);
         }
     }
 
@@ -83,16 +89,10 @@ class UserController extends Controller
         return $response->successResponse(ResponseMessages::LOGOUT_SUCCESS, [], 200);
     }
 
-    public function getMe(ApiResponse $response): JsonResponse
+    public function profile(ApiResponse $response): JsonResponse
     {
-        $user = request()->user();
+        $user = request()->user()->load('gym');
 
-        $user = $user->load('gym');
-
-        if (! $user) {
-            return $response->errorResponse('User not authenticated', 401);
-        }
-
-        return $response->successResponse(ResponseMessages::GET_ME_SUCCESS, new UserResource($user), 200);
+        return $response->successResponse(ResponseMessages::GET_PROFILE_SUCCESS, new UserResource($user), 200);
     }
 }

@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Modules\User\Enums\V1\RoleEnum;
+use Illuminate\Support\Facades\Hash;
 use Modules\User\Exceptions\InvalidOtpException;
+use Modules\User\Exceptions\InvalidPasswordException;
 use Modules\User\Exceptions\RegistrationFailedException;
 use Modules\User\Models\V1\Gym;
 use Modules\User\Models\V1\Otp;
@@ -69,12 +71,28 @@ class UserService
         return $user;
     }
 
+    public function loginWithPassword(array $validated_data): User
+    {
+        $user = User::where('phone_number', $validated_data['phone_number'])->first();
+
+        if (!$user || !Hash::check($validated_data['password'], $user->password)) {
+            throw new InvalidPasswordException('Invalid phone number or password');
+        }
+
+        $user->load('gym');
+
+        $this->authenticateUser($user);
+
+        return $user;
+    }
+
     private function createUser(array $data): User
     {
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'phone_number' => $data['phone_number'],
+            'password'     => $data['password'],
         ]);
     }
 
@@ -134,6 +152,7 @@ class UserService
 
         $token = $user->createToken('novingym')->plainTextToken;
 
+        //i should check what is this for 
         Cookie::queue('auth_token', $token, 60 * 24, null, null, true, true);
 
         // this is add only for testing

@@ -13,7 +13,8 @@ class LoginUserRequest extends FormRequest
     {
         return [
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'exists:users'],
-            'otp_code' => ['required', 'integer', 'digits:5'],
+            'otp_code'     => ['nullable', 'integer', 'digits:5', 'required_without:password'],
+            'password'     => ['nullable', 'string', 'required_without:otp_code'],
         ];
 
     }
