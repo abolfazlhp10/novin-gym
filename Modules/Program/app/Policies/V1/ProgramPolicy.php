@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Program\Policies\V1;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -35,5 +36,4 @@ class ProgramPolicy
         return $user->id === $program->coach_id;
 
     }
-
 }

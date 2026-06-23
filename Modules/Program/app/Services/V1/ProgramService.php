@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Program\Services\V1;
 
 use Modules\Program\Models\V1\Program;
@@ -25,6 +26,7 @@ class ProgramService
     public function update(Program $program, array $data): Program
     {
         $program->update($data);
+
         return $program->fresh();
     }
 
@@ -37,5 +39,4 @@ class ProgramService
     {
         return Program::findOrFail($programId);
     }
-
 }

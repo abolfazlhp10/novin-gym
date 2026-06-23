@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Exercise\Services\V1;
 
 use Illuminate\Support\Arr;

@@ -3,13 +3,13 @@
 namespace Modules\Program\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Modules\Program\Models\V1\Program;
+use Modules\Program\Policies\V1\ProgramPolicy;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Modules\Program\Models\V1\Program;
-use Modules\Program\Policies\V1\ProgramPolicy;
-use Illuminate\Support\Facades\Gate;
 
 class ProgramServiceProvider extends ServiceProvider
 {
@@ -31,7 +31,7 @@ class ProgramServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
 
-        Gate::policy(Program::class,ProgramPolicy::class);
+        Gate::policy(Program::class, ProgramPolicy::class);
 
     }
 
@@ -135,7 +135,7 @@ class ProgramServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->nameLower);
 
-        Blade::componentNamespace(config('modules.namespace').'\\' . $this->name . '\\View\\Components', $this->nameLower);
+        Blade::componentNamespace(config('modules.namespace').'\\'.$this->name.'\\View\\Components', $this->nameLower);
     }
 
     /**

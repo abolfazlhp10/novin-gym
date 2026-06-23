@@ -1,24 +1,24 @@
 <?php
+
 namespace Modules\User\Services\V1;
 
 use App\Contracts\SmsServiceInterface;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Modules\User\Enums\V1\RoleEnum;
 use Modules\User\Exceptions\InvalidOtpException;
 use Modules\User\Exceptions\RegistrationFailedException;
 use Modules\User\Models\V1\Gym;
 use Modules\User\Models\V1\Otp;
 use Modules\User\Models\V1\User;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
-    public function __construct(private SmsServiceInterface $smsService)
-    {}
+    public function __construct(private SmsServiceInterface $smsService) {}
 
     public function register(array $validated_data): User
     {
@@ -56,7 +56,7 @@ class UserService
     public function login(array $validated_data): User
     {
         $phone_number = $validated_data['phone_number'];
-        $otp_code     = $validated_data['otp_code'];
+        $otp_code = $validated_data['otp_code'];
 
         if (! $this->isOtpValid($phone_number, $otp_code)) {
             throw new InvalidOtpException('the otp code is incorrect or expired');
@@ -72,8 +72,8 @@ class UserService
     private function createUser(array $data): User
     {
         return User::create([
-            'first_name'   => $data['first_name'],
-            'last_name'    => $data['last_name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'phone_number' => $data['phone_number'],
         ]);
     }
@@ -87,9 +87,9 @@ class UserService
         }
 
         Gym::create([
-            'name'    => $data['gym_name'],
+            'name' => $data['gym_name'],
             'user_id' => $user_id,
-            'logo'    => $data['logo'] ?? null,
+            'logo' => $data['logo'] ?? null,
             'address' => $data['address'] ?? null,
         ]);
     }
@@ -99,8 +99,8 @@ class UserService
         $otp_code = random_int(10000, 99999);
 
         Otp::create([
-            'phone_number'    => $phone_number,
-            'otp_code'        => $otp_code,
+            'phone_number' => $phone_number,
+            'otp_code' => $otp_code,
             'expiration_time' => Carbon::now()->addMinutes(2),
         ]);
 

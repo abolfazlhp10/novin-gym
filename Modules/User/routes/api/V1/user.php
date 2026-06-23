@@ -1,15 +1,15 @@
 <?php
 
-use Modules\User\Http\Controllers\V1\UserController;
 use Illuminate\Support\Facades\Route;
+use Modules\User\Http\Controllers\V1\UserController;
 
-Route::post('register',[UserController::class,'register']);
+Route::post('register', [UserController::class, 'register']);
 
-Route::post('send-otp',[UserController::class,'sendOtp']);
+Route::post('send-otp', [UserController::class, 'sendOtp']);
 
-Route::post('login' , [UserController::class , 'login']);
+Route::post('login', [UserController::class, 'login']);
 
-Route::middleware(['auth:sanctum'])->group(function(){
-    Route::post('logout', [UserController::class,'logout']);
-    Route::get('get-me', [UserController::class,'getMe']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::get('get-me', [UserController::class, 'getMe']);
 });

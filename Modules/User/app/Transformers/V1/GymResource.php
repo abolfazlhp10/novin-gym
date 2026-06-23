@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\User\Transformers\V1;
 
 use Illuminate\Http\Request;
@@ -13,10 +14,10 @@ class GymResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
-            'logo'       => $this->logo,
-            'address'    => $this->address,
+            'id' => $this->id,
+            'name' => $this->name,
+            'logo' => $this->logo,
+            'address' => $this->address,
             'created_at' => Jalalian::fromCarbon($this->created_at)->format('Y/m/d H:i'),
             'updated_at' => Jalalian::fromCarbon($this->updated_at)->format('Y/m/d H:i'),
         ];

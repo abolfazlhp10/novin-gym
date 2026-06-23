@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('user_name')->index();
             $table->string('phone_number')->index();
-            $table->foreignId('coach_id')->constrained('users','id')->cascadeOnUpdate();
+            $table->foreignId('coach_id')->constrained('users', 'id')->cascadeOnUpdate();
             $table->json('meta_data');
             $table->text('description')->nullable();
             $table->timestamps();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\User\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -11,19 +12,19 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'   => ['required', 'string', 'min:3', 'max:255'],
-            'last_name'    => ['required', 'string', 'min:3', 'max:255'],
+            'first_name' => ['required', 'string', 'min:3', 'max:255'],
+            'last_name' => ['required', 'string', 'min:3', 'max:255'],
             'phone_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:users'],
-            'gym_name'     => ['required', 'string', 'min:3', 'max:255'],
-            'logo'         => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
-            'address'      => ['nullable', 'string','min:3'],
+            'gym_name' => ['required', 'string', 'min:3', 'max:255'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
+            'address' => ['nullable', 'string', 'min:3'],
         ];
     }
 
     public function messages()
     {
         return [
-            'phone_number.unique' => 'این شماره موبایل قبلا ثبت نام کرده است.'
+            'phone_number.unique' => 'این شماره موبایل قبلا ثبت نام کرده است.',
         ];
     }
 

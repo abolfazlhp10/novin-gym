@@ -13,10 +13,10 @@ class UpdateExerciseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_fa'     => ['sometimes', 'string', 'max:255', Rule::unique('exercises', 'name_fa')->ignore($this->exercise->id)],
-            'name_en'     => ['sometimes', 'string', 'max:255', Rule::unique('exercises', 'name_en')->ignore($this->exercise->id)],
+            'name_fa' => ['sometimes', 'string', 'max:255', Rule::unique('exercises', 'name_fa')->ignore($this->exercise->id)],
+            'name_en' => ['sometimes', 'string', 'max:255', Rule::unique('exercises', 'name_en')->ignore($this->exercise->id)],
             'category_id' => ['sometimes', 'integer', 'exists:categories,id'],
-            'video'       => ['sometimes', 'file', 'mimes:mp4,gif', 'max:5120'],
+            'video' => ['sometimes', 'file', 'mimes:mp4,gif', 'max:5120'],
             'equipment_id' => ['sometimes', 'integer', 'exists:equipments,id'],
             'description' => ['nullable', 'string'],
         ];
